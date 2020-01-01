@@ -52,6 +52,43 @@ protected:
 	virtual void BeginPlay();
 
 public:
+
+	/** The Maximum number of Jump for the Character*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
+		int MaxJump = 2;
+
+	/** The Jump Force of the Character*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
+		float JumpForce = 1500.f;
+
+	/** The Forward Jump Force of the Character*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
+		float ForwardJumpForce = 500.f;
+
+	/** The Maximum number of Jump for the Character*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
+		int MaxDash = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
+		float DashForce = 2000.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
+		float BackwardRatio = 0.5f;
+
+	/** Double Jump Handling */
+	void DoubleJump();
+	void Dash();
+	virtual void Landed(const FHitResult& Hit) override;
+
+protected:
+	FTimerHandle FDelayHandle;
+
+private:
+	int JumpCounter = 0;
+	int DashCounter = 0;
+	FVector LaunchVec;
+	void SlowDownDash();
+public:
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;

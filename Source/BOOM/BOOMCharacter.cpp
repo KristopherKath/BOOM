@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "MotionControllerComponent.h"
 #include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
+#include "GameFramework/CharacterMovementComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -25,6 +26,7 @@ ABOOMCharacter::ABOOMCharacter()
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
+	
 
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
@@ -114,8 +116,8 @@ void ABOOMCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	check(PlayerInputComponent);
 
 	// Bind jump events
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ABOOMCharacter::Dash);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ABOOMCharacter::DoubleJump);
 
 	// Bind fire event
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ABOOMCharacter::OnFire);
@@ -253,6 +255,31 @@ void ABOOMCharacter::EndTouch(const ETouchIndex::Type FingerIndex, const FVector
 //		}
 //	}
 //}
+
+void ABOOMCharacter::DoubleJump() {
+	if (JumpCounter < MaxJump) {
+		JumpCounter++;
+		LaunchVec = GetLastMovementInputVector();
+		LaunchCharacter(FVector(LaunchVec.X*ForwardJumpForce, LaunchVec.Y*ForwardJumpForce, JumpForce), true, true);
+	}
+}
+
+void ABOOMCharacter::Dash() {
+	LaunchVec = GetLastMovementInputVector();
+	if (DashCounter < MaxDash && !(LaunchVec.IsNearlyZero())) {
+		DashCounter++;
+		LaunchCharacter(FVector(LaunchVec.X*DashForce, LaunchVec.Y*DashForce, JumpForce/3), true, true);
+		GetWorld()->GetTimerManager().SetTimer(FDelayHandle, this, &ABOOMCharacter::SlowDownDash, 0.2f, false);
+	}
+}
+
+void ABOOMCharacter::SlowDownDash() {
+	LaunchCharacter(FVector(LaunchVec.X*DashForce*BackwardRatio, LaunchVec.Y*DashForce*BackwardRatio, 0), true, false);
+}
+void ABOOMCharacter::Landed(const FHitResult& Hit) {
+	JumpCounter = 0;
+	DashCounter = 0;
+}
 
 void ABOOMCharacter::MoveForward(float Value)
 {
