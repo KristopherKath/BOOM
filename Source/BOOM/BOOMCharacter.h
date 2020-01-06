@@ -47,7 +47,8 @@ class ABOOMCharacter : public ACharacter
 
 public:
 	ABOOMCharacter();
-
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 protected:
 	virtual void BeginPlay();
 
@@ -75,11 +76,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
 		float BackwardRatio = 0.5f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
+		float FallingForce = 200.f;
+
 	/** Double Jump Handling */
 	void DoubleJump();
 	void Dash();
 	virtual void Landed(const FHitResult& Hit) override;
-
+	virtual bool IsFalling();
 protected:
 	FTimerHandle FDelayHandle;
 
@@ -118,7 +122,8 @@ public:
 	uint32 bUsingMotionControllers : 1;
 
 protected:
-	
+
+
 	/** Fires a projectile. */
 	void OnFire();
 

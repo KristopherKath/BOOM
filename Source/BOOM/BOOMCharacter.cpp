@@ -107,6 +107,18 @@ void ABOOMCharacter::BeginPlay()
 	}
 }
 
+void ABOOMCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (IsFalling()) {
+		LaunchCharacter(FVector(0,0, FallingForce), false, false);
+		if (JumpCounter == 0) {
+			JumpCounter++;
+		}
+	}
+	
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -279,6 +291,17 @@ void ABOOMCharacter::SlowDownDash() {
 void ABOOMCharacter::Landed(const FHitResult& Hit) {
 	JumpCounter = 0;
 	DashCounter = 0;
+}
+
+bool ABOOMCharacter::IsFalling(){
+	if (GetVelocity().Z < 0) {
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	
 }
 
 void ABOOMCharacter::MoveForward(float Value)
