@@ -84,6 +84,8 @@ ABOOMCharacter::ABOOMCharacter()
 
 	// Uncomment the following line to turn motion controllers on by default:
 	//bUsingMotionControllers = true;
+
+	bCanDash = true;
 }
 
 void ABOOMCharacter::BeginPlay()
@@ -150,6 +152,12 @@ void ABOOMCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAxis("TurnRate", this, &ABOOMCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABOOMCharacter::LookUpAtRate);
+}
+
+void ABOOMCharacter::ResetDash()
+{
+	bCanDash = true;
+	
 }
 
 void ABOOMCharacter::OnFire()
@@ -277,12 +285,19 @@ void ABOOMCharacter::DoubleJump() {
 }
 
 void ABOOMCharacter::Dash() {
-	LaunchVec = GetLastMovementInputVector();
-	if (DashCounter < MaxDash && !(LaunchVec.IsNearlyZero())) {
-		DashCounter++;
-		LaunchCharacter(FVector(LaunchVec.X*DashForce, LaunchVec.Y*DashForce, JumpForce/3), true, true);
-		GetWorld()->GetTimerManager().SetTimer(FDelayHandle, this, &ABOOMCharacter::SlowDownDash, 0.2f, false);
+	if (bCanDash) {
+		LaunchVec = GetLastMovementInputVector();
+		if (DashCounter < MaxDash && !(LaunchVec.IsNearlyZero())) {
+			DashCounter++;
+			LaunchCharacter(FVector(LaunchVec.X*DashForce, LaunchVec.Y*DashForce, JumpForce / 3), true, true);
+			GetWorld()->GetTimerManager().SetTimer(FDelayHandle, this, &ABOOMCharacter::SlowDownDash, 0.2f, false);
+			GetWorld()->GetTime  rManager().SetTimer(DashTimerHandle, this, &ABOOMCharacter::ResetDash, DashDelay, false);
+		}
+		if (DashCounter == MaxDash) {
+			bCanDash = false;
+		}
 	}
+	
 }
 
 void ABOOMCharacter::SlowDownDash() {

@@ -70,14 +70,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
 		int MaxDash = 1;
 
+	/** Delay Time between dashes*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
+		float DashDelay = 3.f;
+
+	/** The forward force of the dash*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
 		float DashForce = 2000.f;
 	
+	/** The ratio of force after the dash the dash*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
 		float BackwardRatio = 0.5f;
 
+	/** The additional force of the player*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
-		float FallingForce = 200.f;
+		float FallingForce = -15.f;
 
 	/** Double Jump Handling */
 	void DoubleJump();
@@ -122,7 +129,14 @@ public:
 	uint32 bUsingMotionControllers : 1;
 
 protected:
+	/** True if the player can dash, false otherwise*/
+	bool bCanDash;
 
+	/**Handles the delay between dash*/
+	FTimerHandle DashTimerHandle;
+
+	/**Reset the player ability to dash*/
+	void ResetDash();
 
 	/** Fires a projectile. */
 	void OnFire();
