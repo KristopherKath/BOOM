@@ -13,6 +13,12 @@ UCLASS()
 class BOOM_API UChooseNextWaypoint : public UBTTaskNode
 {
 	GENERATED_BODY()
-
+		//Inheritance (i think) of BTTaskNode for the sake of the C++ class
 		virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)override;
+
+	//Creating variables for BlackBoard Keys
+protected:
+	UPROPERTY(EditAnywhere, Category = "BlackBoard")
+		struct FBlackboardKeySelector Index;
+
 };
