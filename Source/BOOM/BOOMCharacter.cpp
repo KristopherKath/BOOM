@@ -290,8 +290,8 @@ void ABOOMCharacter::Dash() {
 		if (DashCounter < MaxDash && !(LaunchVec.IsNearlyZero())) {
 			DashCounter++;
 			LaunchCharacter(FVector(LaunchVec.X*DashForce, LaunchVec.Y*DashForce, JumpForce / 3), true, true);
-			GetWorld()->GetTimerManager().SetTimer(FDelayHandle, this, &ABOOMCharacter::SlowDownDash, 0.2f, false);
-			GetWorld()->GetTime  rManager().SetTimer(DashTimerHandle, this, &ABOOMCharacter::ResetDash, DashDelay, false);
+			//GetWorld()->GetTimerManager().SetTimer(FDelayHandle, this, &ABOOMCharacter::SlowDownDash, 0.2f, false);
+			//GetWorld()->GetTime  rManager().SetTimer(DashTimerHandle, this, &ABOOMCharacter::ResetDash, DashDelay, false);
 		}
 		if (DashCounter == MaxDash) {
 			bCanDash = false;
