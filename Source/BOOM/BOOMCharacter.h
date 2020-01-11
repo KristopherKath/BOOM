@@ -92,11 +92,13 @@ public:
 	virtual void Landed(const FHitResult& Hit) override;
 	virtual bool IsFalling();
 protected:
-	FTimerHandle FDelayHandle;
+	UPROPERTY(BlueprintReadOnly)
+		float AbilityCooldown = 1.f;
 
 private:
 	int JumpCounter = 0;
 	int DashCounter = 0;
+	
 	FVector LaunchVec;
 	void SlowDownDash();
 public:
@@ -129,14 +131,7 @@ public:
 	uint32 bUsingMotionControllers : 1;
 
 protected:
-	/** True if the player can dash, false otherwise*/
-	bool bCanDash;
 
-	/**Handles the delay between dash*/
-	FTimerHandle DashTimerHandle;
-
-	/**Reset the player ability to dash*/
-	void ResetDash();
 
 	/** Fires a projectile. */
 	void OnFire();
