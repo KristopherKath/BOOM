@@ -289,7 +289,7 @@ void ABOOMCharacter::Dash() {
 		LaunchVec = GetLastMovementInputVector();
 		if (DashCounter < MaxDash && !(LaunchVec.IsNearlyZero())) {
 			DashCounter++;
-			LaunchCharacter(FVector(LaunchVec.X*DashForce, LaunchVec.Y*DashForce, JumpForce / 3), true, true);
+			LaunchCharacter(FVector(LaunchVec.X*DashForce, LaunchVec.Y*DashForce, JumpForce / 2), true, true);
 			AbilityCooldown = 0;
 		}
 
