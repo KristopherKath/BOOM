@@ -12,6 +12,7 @@
 #include "MotionControllerComponent.h"
 #include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Widget.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -85,7 +86,6 @@ ABOOMCharacter::ABOOMCharacter()
 	// Uncomment the following line to turn motion controllers on by default:
 	//bUsingMotionControllers = true;
 
-	bCanDash = true;
 }
 
 void ABOOMCharacter::BeginPlay()
@@ -107,6 +107,7 @@ void ABOOMCharacter::BeginPlay()
 		VR_Gun->SetHiddenInGame(true, true);
 		Mesh1P->SetHiddenInGame(false, true);
 	}
+	
 }
 
 void ABOOMCharacter::Tick(float DeltaTime)
@@ -117,6 +118,9 @@ void ABOOMCharacter::Tick(float DeltaTime)
 		if (JumpCounter == 0) {
 			JumpCounter++;
 		}
+	}
+	if (AbilityCooldown < 1) {
+		AbilityCooldown += (DeltaTime/DashDelay);
 	}
 	
 }
@@ -154,11 +158,7 @@ void ABOOMCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABOOMCharacter::LookUpAtRate);
 }
 
-void ABOOMCharacter::ResetDash()
-{
-	bCanDash = true;
-	
-}
+
 
 void ABOOMCharacter::OnFire()
 {
@@ -285,18 +285,16 @@ void ABOOMCharacter::DoubleJump() {
 }
 
 void ABOOMCharacter::Dash() {
-	if (bCanDash) {
+	if (AbilityCooldown >= 1) {
 		LaunchVec = GetLastMovementInputVector();
 		if (DashCounter < MaxDash && !(LaunchVec.IsNearlyZero())) {
 			DashCounter++;
-			LaunchCharacter(FVector(LaunchVec.X*DashForce, LaunchVec.Y*DashForce, JumpForce / 3), true, true);
-			GetWorld()->GetTimerManager().SetTimer(FDelayHandle, this, &ABOOMCharacter::SlowDownDash, 0.2f, false);
-			GetWorld()->GetTimerManager().SetTimer(DashTimerHandle, this, &ABOOMCharacter::ResetDash, DashDelay, false);
+			LaunchCharacter(FVector(LaunchVec.X*DashForce, LaunchVec.Y*DashForce, JumpForce / 2), true, true);
+			AbilityCooldown = 0;
 		}
-		if (DashCounter == MaxDash) {
-			bCanDash = false;
-		}
+
 	}
+		
 	
 }
 

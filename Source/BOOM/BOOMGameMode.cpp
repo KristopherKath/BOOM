@@ -14,4 +14,7 @@ ABOOMGameMode::ABOOMGameMode()
 
 	// use our custom HUD class
 	HUDClass = ABOOMHUD::StaticClass();
+	
+	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerClassFinder(TEXT("/Game/GameMode/PlayerController/BP_BOOM_Controller"));
+	PlayerControllerClass = PlayerControllerClassFinder.Class;
 }
