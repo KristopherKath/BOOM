@@ -19,6 +19,9 @@ class BOOM_API UChooseNextWaypoint : public UBTTaskNode
 	//Creating variables for BlackBoard Keys
 protected:
 	UPROPERTY(EditAnywhere, Category = "BlackBoard")
-		struct FBlackboardKeySelector Index;
+		struct FBlackboardKeySelector IndexKey;
+
+	UPROPERTY(EditAnywhere, Category = "BlackBoard")
+		struct FBlackboardKeySelector WaypointKey;
 
 };
