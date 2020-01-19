@@ -72,6 +72,7 @@ void ABOOMCharacter::BeginPlay()
 void ABOOMCharacter::FireWeapon()
 {
 	CurrentWeapon->Fire();
+	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayCameraShake(shootingShake);
 }
 
 
@@ -167,6 +168,7 @@ void ABOOMCharacter::MoveForward(float Value)
 	{
 		// add movement in that direction
 		AddMovementInput(GetActorForwardVector(), Value);
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayCameraShake(forwardShake);
 	}
 }
 
@@ -176,6 +178,7 @@ void ABOOMCharacter::MoveRight(float Value)
 	{
 		// add movement in that direction
 		AddMovementInput(GetActorRightVector(), Value);
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayCameraShake(rightShake);
 	}
 }
 

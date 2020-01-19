@@ -4,10 +4,10 @@
 #include "RightShake.h"
 
 URightShake::URightShake(){
-	OscillationDuration = 0.5f;
-	OscillationBlendInTime = 0.15f;
-	OscillationBlendOutTime = 0.15f;
+	OscillationDuration = 0.2f;
+	OscillationBlendInTime = 0.10f;
+	OscillationBlendOutTime = 0.05f;
 
-	RotOscillation.Yaw.Amplitude = FMath::RandRange(-3.f, 3.f);
-	RotOscillation.Yaw.Frequency = 1.f;
+	RotOscillation.Roll.Amplitude = 0.25f;
+	RotOscillation.Roll.Frequency = 0.1f;
 }
