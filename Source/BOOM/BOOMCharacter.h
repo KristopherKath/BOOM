@@ -92,6 +92,17 @@ public:
 	void Dash();
 	virtual void Landed(const FHitResult& Hit) override;
 	virtual bool IsFalling();
+
+	/** Camera Swaying Handling */
+	/** Right Shake */
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UCameraShake> rightShake;
+	/** Forward Shake */
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UCameraShake> forwardShake;
+	/** Fire Shake */
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UCameraShake> shootingShake;
 protected:
 	UPROPERTY(BlueprintReadOnly)
 		float AbilityCooldown = 1.f;

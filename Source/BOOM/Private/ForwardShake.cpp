@@ -6,8 +6,8 @@
 UForwardShake::UForwardShake() {
 	OscillationDuration = 0.2f;
 	OscillationBlendInTime = 0.10f;
-	OscillationBlendOutTime = 0.10f;
+	OscillationBlendOutTime = 0.05f;
 
-	RotOscillation.Roll.Amplitude = FMath::RandRange(-3.f, 3.f);
-	RotOscillation.Roll.Frequency = 0.1f;
+	RotOscillation.Pitch.Amplitude = 0.25f;
+	RotOscillation.Pitch.Frequency = 0.1f;
 }
