@@ -72,7 +72,6 @@ void ABOOMCharacter::BeginPlay()
 void ABOOMCharacter::FireWeapon()
 {
 	CurrentWeapon->Fire();
-	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayCameraShake(shootingShake);
 }
 
 
@@ -149,7 +148,7 @@ void ABOOMCharacter::SlowDownDash() {
 void ABOOMCharacter::Landed(const FHitResult& Hit) {
 	JumpCounter = 0;
 	DashCounter = 0;
-	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayCameraShake(shootingShake);
+
 }
 
 bool ABOOMCharacter::IsFalling(){

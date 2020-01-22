@@ -101,8 +101,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<UCameraShake> forwardShake;
 	/** Fire Shake */
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<UCameraShake> shootingShake;
 protected:
 	UPROPERTY(BlueprintReadOnly)
 		float AbilityCooldown = 1.f;
