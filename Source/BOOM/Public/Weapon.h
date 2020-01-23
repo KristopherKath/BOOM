@@ -6,50 +6,11 @@
 #include "GameFramework/Actor.h"
 #include "Weapon.generated.h"
 
-#define TRACE_WEAPON ECC_GameTraceChannel1
 
-class UBoxComponent;
+
 class USkeletalMeshComponent;
-
-
-
-//Enum for type of Projectile Fire
-UENUM(BlueprintType)
-namespace EWeaponProjectile
-{
-	enum ProjectileType {
-		EBullet			UMETA(DisplayName = "Bullet"),
-		ESpread			UMETA(DisplayName = "Spread"),
-		EProjectile		UMETA(DisplayName = "Projectile"),
-	};
-}
-
-
-USTRUCT()
-struct FWeaponData
-{
-	GENERATED_USTRUCT_BODY()
-
-	//Ammo count
-	UPROPERTY(EditDefaultsOnly, Category = Ammo)
-	int32 MaxAmmo;
-
-	//Time to be able to fire again
-	UPROPERTY(EditDefaultsOnly, Category = Config)
-	float TimeBetweenShots;
-
-	//How many shots to make in one fire
-	UPROPERTY(EditDefaultsOnly, Category = Ammo)
-	int32 ShotCost;
-
-	//Range of bullets
-	UPROPERTY(EditDefaultsOnly, Category = Config)
-	float WeaponRange;
-
-	//Spread of bullets
-	UPROPERTY(EditDefaultsOnly, Category = Config)
-	float WeaponSpread;
-};
+class UDamageType;
+class UParticleSystem;
 
 UCLASS()
 class BOOM_API AWeapon : public AActor
@@ -57,35 +18,65 @@ class BOOM_API AWeapon : public AActor
 	GENERATED_BODY()
 
 public:
+	// Sets default values for this actor's properties
 	AWeapon();
-
-	//Triggers the Fire Action
-	UFUNCTION()
-	void Fire();
-
-	//Deals with Instant Types of Fire
-	UFUNCTION()
-	void Instant_Fire();
-
-	//Object for accessing Struct & Enum
-	UPROPERTY(EditDefaultsOnly, Category = Config)
-	FWeaponData WeaponConfig;
-
-	//Allows for editing Weapon Projectile Type
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Config)
-	TEnumAsByte<EWeaponProjectile::ProjectileType> ProjectileType;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Collision)
-	UBoxComponent* CollisionComp;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Config)
-	USkeletalMeshComponent* WeaponMesh;
 
 protected:
 
-	//Traces the weapon Fire from a point to another point
-	FHitResult WeaponTrace(const FVector &TraceFrom, const FVector &TraceTo) const;
+	virtual void BeginPlay() override;
 
-	
-	void ProcessInstantHit(const FHitResult& Impact, const FVector& Origin, const FVector& ShootDir, int32 RandomSeed, float ReticleSpread);
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USkeletalMeshComponent* MeshComp;
+
+	void PlayFireEffects(FVector);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	TSubclassOf<UDamageType> DamageType;
+
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	FName MuzzleSocketName;
+
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UParticleSystem* MuzzleEffect;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UParticleSystem* DefaultImpactEffect;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UParticleSystem* FleshImpactEffect;
+
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	FName TracerTargetName;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UParticleSystem* TracerEffect;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	TSubclassOf<UCameraShake> FireCamShake;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float BaseDamage;
+
+	virtual void Fire();
+
+	FTimerHandle TimerHandle_TimeBetweenShots;
+
+	float TimeBetweenShots;
+
+	float LastFireTime;
+
+	/* RPM - Bullets per minute fired by weapon */
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+		float RateOfFire;
+
+
+public:
+
+	void StartFire();
+
+	void StopFire();
 };
+

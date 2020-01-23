@@ -14,44 +14,50 @@ class ABOOMCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	/** Pawn mesh: 1st person view (arms; seen only by self) */
-	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
-	class USkeletalMeshComponent* Mesh1P;
+	
 
 
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FirstPersonCameraComponent;
 
+
 	/** Motion controller (right hand) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UMotionControllerComponent* R_MotionController;
+		class UMotionControllerComponent* R_MotionController;
 
 	/** Motion controller (left hand) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UMotionControllerComponent* L_MotionController;
+		class UMotionControllerComponent* L_MotionController;
 
 
-
-	UFUNCTION()
-	void FireWeapon();
 
 	UPROPERTY(VisibleAnywhere, Category = "Player")
 	TSubclassOf<AWeapon> StarterWeaponClass;
+
 
 	AWeapon* CurrentWeapon;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "Player")
 	FName WeaponAttachSocketName;
 
+	void StartFire();
+
+	void StopFire();
+
+
+
 	UFUNCTION()
 	virtual void BeginPlay() override;
-
 
 public:
 	ABOOMCharacter();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	/** Pawn mesh: 1st person view (arms; seen only by self) */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
+		class USkeletalMeshComponent* Mesh1P;
 
 public:
 
@@ -100,7 +106,7 @@ public:
 	/** Forward Shake */
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<UCameraShake> forwardShake;
-	/** Fire Shake */
+
 protected:
 	UPROPERTY(BlueprintReadOnly)
 		float AbilityCooldown = 1.f;

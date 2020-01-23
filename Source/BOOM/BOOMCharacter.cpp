@@ -48,30 +48,43 @@ ABOOMCharacter::ABOOMCharacter()
 	Mesh1P->RelativeRotation = FRotator(1.9f, -19.19f, 5.2f);
 	Mesh1P->RelativeLocation = FVector(-0.5f, -4.4f, -155.7f);
 
-	//CurrentWeapon->SetupAttachment(Mesh1P, "GripPoint");
 	WeaponAttachSocketName = "Weapon_Socket";
 
 }
 
+
 void ABOOMCharacter::BeginPlay()
 {
-	// Call the base class  
 	Super::BeginPlay();
 
+	//Spawn a default weapon
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
 	CurrentWeapon = GetWorld()->SpawnActor<AWeapon>(StarterWeaponClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->SetOwner(this);
-		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponAttachSocketName);
+		CurrentWeapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponAttachSocketName);
 	}
-
 }
 
-void ABOOMCharacter::FireWeapon()
+
+void ABOOMCharacter::StartFire()
 {
-	CurrentWeapon->Fire();
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->StartFire();
+	}
+}
+
+
+void ABOOMCharacter::StopFire()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->StopFire();
+	}
 }
 
 
@@ -90,6 +103,7 @@ void ABOOMCharacter::Tick(float DeltaTime)
 	
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -102,8 +116,9 @@ void ABOOMCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ABOOMCharacter::Dash);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ABOOMCharacter::DoubleJump);
 
-	// Bind fire event
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ABOOMCharacter::FireWeapon);
+	//Fire Input
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ABOOMCharacter::StartFire);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ABOOMCharacter::StopFire);
 
 	// Bind movement events
 	PlayerInputComponent->BindAxis("MoveForward", this, &ABOOMCharacter::MoveForward);
@@ -117,9 +132,6 @@ void ABOOMCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABOOMCharacter::LookUpAtRate);
 }
-
-
-
 
 
 void ABOOMCharacter::DoubleJump() {
