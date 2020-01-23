@@ -15,7 +15,7 @@ class ABOOMCharacter : public ACharacter
 	GENERATED_BODY()
 
 	
-
+	
 
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
