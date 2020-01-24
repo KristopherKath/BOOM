@@ -70,8 +70,11 @@ protected:
 
 	/* RPM - Bullets per minute fired by weapon */
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-		float RateOfFire;
+	float RateOfFire;
 
+	// Range for shots
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float WeaponRange;
 
 public:
 

@@ -36,6 +36,8 @@ AWeapon::AWeapon()
 
 	//Bullets per minute
 	RateOfFire = 600;
+
+	WeaponRange = 1500;
 }
 
 void AWeapon::BeginPlay()
@@ -55,11 +57,12 @@ void AWeapon::Fire()
 		FVector EyeLocation;
 		FRotator EyeRotation;
 		MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+
+		//Get Direction
 		FVector ShotDirection = EyeRotation.Vector();
 
-
 		// Get the vector end of a line trace
-		FVector TraceEnd = EyeLocation + (ShotDirection * 10000);
+		FVector TraceEnd = EyeLocation + (ShotDirection * WeaponRange);
 
 		// Particle "Target" parameter. It Changes if we hit something
 		FVector TracerEndPoint = TraceEnd;

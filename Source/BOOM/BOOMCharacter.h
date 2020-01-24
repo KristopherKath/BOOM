@@ -22,13 +22,13 @@ class ABOOMCharacter : public ACharacter
 	class UCameraComponent* FirstPersonCameraComponent;
 
 
-	/** Motion controller (right hand) */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		class UMotionControllerComponent* R_MotionController;
+	///** Motion controller (right hand) */
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	//	class UMotionControllerComponent* R_MotionController;
 
-	/** Motion controller (left hand) */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		class UMotionControllerComponent* L_MotionController;
+	///** Motion controller (left hand) */
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	//	class UMotionControllerComponent* L_MotionController;
 
 
 
