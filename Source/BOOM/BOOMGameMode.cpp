@@ -12,6 +12,6 @@ ABOOMGameMode::ABOOMGameMode()
 	DefaultPawnClass = PlayerPawnClassFinder.Class;
 
 	
-	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerClassFinder(TEXT("/Game/GameMode/PlayerController/BP_BOOM_Controller"));
+	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerClassFinder(TEXT("/Game/Blueprints/PlayerController/BP_BOOM_Controller"));
 	PlayerControllerClass = PlayerControllerClassFinder.Class;
 }

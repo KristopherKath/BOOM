@@ -8,6 +8,6 @@
 AMainMenuGameMode::AMainMenuGameMode() : Super() {
 	HUDClass = AMainMenuHUD::StaticClass();
 
-	ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerClassFinder(TEXT("/Game/GameMode/PlayerController/BP_Main_Menu_Controller"));
+	ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerClassFinder(TEXT("/Game/Blueprints/PlayerController/BP_Main_Menu_Controller"));
 	PlayerControllerClass = PlayerControllerClassFinder.Class;
 }
