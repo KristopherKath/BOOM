@@ -13,6 +13,10 @@ class ABOOMGameMode : public AGameModeBase
 
 public:
 	ABOOMGameMode();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TArray<class ALevelEnter*> LevelEnters;
+protected:
+	
 };
 
 
