@@ -25,7 +25,6 @@ ALevelEnter::ALevelEnter()
 void ALevelEnter::BeginPlay()
 {
 	Super::BeginPlay();
-	Cast<ABOOMGameMode>(GetWorld()->GetAuthGameMode())->LevelEnters.Add(this);
 	
 }
 
