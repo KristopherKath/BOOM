@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "EndStage.generated.h"
-#include "GameFramework/Character.h"
+
 
 UCLASS()
 class BOOM_API AEndStage : public AActor
@@ -19,10 +19,13 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	UPROPERTY(EditableAnywhere, Catergory = Components)
-	TArray<ACharacter> Enemies;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category = "Components")
+	TArray<class ACharacter*> Enemies;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	FVector ChangingVector;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	AActor* Door;
 };

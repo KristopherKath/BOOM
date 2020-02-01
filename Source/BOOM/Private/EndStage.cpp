@@ -2,7 +2,8 @@
 
 
 #include "EndStage.h"
-
+#include "GameFramework/Character.h"
+#include "Kismet/KismetMathLibrary.h"
 // Sets default values
 AEndStage::AEndStage()
 {
@@ -15,15 +16,12 @@ AEndStage::AEndStage()
 void AEndStage::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void AEndStage::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (Enemies.Num == 0) {
-
-	}
+	
 }
 
