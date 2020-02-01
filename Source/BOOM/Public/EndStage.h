@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "EndStage.generated.h"
+#include "GameFramework/Character.h"
 
 UCLASS()
 class BOOM_API AEndStage : public AActor
@@ -22,5 +23,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	TArray<> 
+	UPROPERTY(EditableAnywhere, Catergory = Components)
+	TArray<ACharacter> Enemies;
 };

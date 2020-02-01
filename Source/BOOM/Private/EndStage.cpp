@@ -22,6 +22,8 @@ void AEndStage::BeginPlay()
 void AEndStage::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (Enemies.Num == 0) {
 
+	}
 }
 
