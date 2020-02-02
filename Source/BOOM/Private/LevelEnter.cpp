@@ -41,7 +41,6 @@ void ALevelEnter::NotifyActorBeginOverlap(AActor* OtherActor)
 	ABOOMCharacter* MyCharacter = Cast<ABOOMCharacter>(OtherActor);
 	if (MyCharacter) {
 		//start Level
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("This is an on screen message!"));
 	}
 }
 
