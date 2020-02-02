@@ -35,7 +35,7 @@ void UHealth::TakeDamage(AActor * DamagedActor, float Damage, const UDamageType 
 {
 	if (Damage <= 0)
 		return;
-	Health = FMath::Clamp(Health - Damage, 0.0f, DefaultHealth);
+	Health = FMath::Clamp(Health - Damage, 0.0f, DefaultHealth*2);
 
 }
 
