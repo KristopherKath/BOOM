@@ -35,7 +35,7 @@ class ABOOMCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, Category = "Player")
 	TSubclassOf<AWeapon> StarterWeaponClass;
 
-
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	AWeapon* CurrentWeapon;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "Player")

@@ -64,6 +64,7 @@ protected:
 
 	FTimerHandle TimerHandle_TimeBetweenShots;
 
+
 	float TimeBetweenShots;
 
 	float LastFireTime;
@@ -76,10 +77,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float WeaponRange;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	int AmmoCapacity;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
+	int currentAmmo;
+
 public:
 
 	void StartFire();
 
 	void StopFire();
+	UFUNCTION(BlueprintCallable)
+	void AddAmmo(int addAmount);
 };
 

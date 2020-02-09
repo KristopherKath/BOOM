@@ -10,6 +10,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "PhysicalMaterials\PhysicalMaterial.h"
+#include "Math/UnrealMathUtility.h"
 #include "TimerManager.h"
 #include "BOOM.h"
 
@@ -38,12 +39,14 @@ AWeapon::AWeapon()
 	RateOfFire = 600;
 
 	WeaponRange = 1500;
+
+	AmmoCapacity = 30;
 }
 
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-
+	currentAmmo = AmmoCapacity;
 	TimeBetweenShots = 60 / RateOfFire;
 }
 
@@ -51,7 +54,7 @@ void AWeapon::Fire()
 {
 	// Trace the world from pawn eyes to crosshair location (center screen)
 	AActor* MyOwner = GetOwner();
-	if (MyOwner)
+	if (MyOwner && currentAmmo > 0)
 	{
 		// Retrieves the eye location and rotation of actor
 		FVector EyeLocation;
@@ -135,6 +138,7 @@ void AWeapon::Fire()
 
 		LastFireTime = GetWorld()->TimeSeconds;
 
+		currentAmmo--;
 	}
 
 }
@@ -187,4 +191,8 @@ void AWeapon::PlayFireEffects(FVector TracerEndPoint)
 			PC->ClientPlayCameraShake(FireCamShake);
 		}
 	}
+
+}
+void AWeapon::AddAmmo(int addAmount) {
+	currentAmmo = FMath::Clamp(currentAmmo + addAmount, 0, AmmoCapacity);
 }
