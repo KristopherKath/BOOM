@@ -22,11 +22,6 @@ void UHealth::BeginPlay()
 {
 	Super::BeginPlay();
 	Health = DefaultHealth;
-	AActor* Owner = GetOwner();
-	if (Owner) 
-	{
-		Owner->OnTakeAnyDamage.AddDynamic(this, &UHealth::TakeDamage);
-	}
 	// ...
 	
 }
