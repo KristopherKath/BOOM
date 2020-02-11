@@ -72,7 +72,7 @@ void ABOOMCharacter::BeginPlay()
 
 void ABOOMCharacter::StartFire()
 {
-	if (CurrentWeapon)
+	if (CurrentWeapon && !inputDisabled)
 	{
 		CurrentWeapon->StartFire();
 	}
@@ -97,7 +97,7 @@ void ABOOMCharacter::Tick(float DeltaTime)
 			JumpCounter++;
 		}
 	}
-	if (AbilityCooldown < 1) {
+	if (AbilityCooldown < 1 && !inputDisabled) {
 		AbilityCooldown += (DeltaTime/DashDelay);
 	}
 	
@@ -135,7 +135,7 @@ void ABOOMCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 
 
 void ABOOMCharacter::DoubleJump() {
-	if (JumpCounter < MaxJump) {
+	if (JumpCounter < MaxJump && !inputDisabled) {
 		JumpCounter++;
 		LaunchVec = GetLastMovementInputVector();
 		LaunchCharacter(FVector(LaunchVec.X*ForwardJumpForce, LaunchVec.Y*ForwardJumpForce, JumpForce), true, true);
@@ -143,7 +143,7 @@ void ABOOMCharacter::DoubleJump() {
 }
 
 void ABOOMCharacter::Dash() {
-	if (AbilityCooldown >= 1) {
+	if (AbilityCooldown >= 1 && !inputDisabled) {
 		LaunchVec = GetLastMovementInputVector();
 		if (DashCounter < MaxDash && !(LaunchVec.IsNearlyZero())) {
 			DashCounter++;
@@ -176,7 +176,7 @@ bool ABOOMCharacter::IsFalling(){
 
 void ABOOMCharacter::MoveForward(float Value)
 {
-	if (Value != 0.0f)
+	if (Value != 0.0f && !inputDisabled)
 	{
 		// add movement in that direction
 		AddMovementInput(GetActorForwardVector(), Value);
@@ -186,7 +186,7 @@ void ABOOMCharacter::MoveForward(float Value)
 
 void ABOOMCharacter::MoveRight(float Value)
 {
-	if (Value != 0.0f)
+	if (Value != 0.0f && !inputDisabled)
 	{
 		// add movement in that direction
 		AddMovementInput(GetActorRightVector(), Value);
@@ -196,13 +196,20 @@ void ABOOMCharacter::MoveRight(float Value)
 
 void ABOOMCharacter::TurnAtRate(float Rate)
 {
-	// calculate delta for this frame from the rate information
-	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+	if (!inputDisabled)
+	{
+		// calculate delta for this frame from the rate information
+		AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+
+	}
 }
 
 void ABOOMCharacter::LookUpAtRate(float Rate)
 {
-	// calculate delta for this frame from the rate information
-	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	if (!inputDisabled) {
+		// calculate delta for this frame from the rate information
+		AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	}
+	
 }
 

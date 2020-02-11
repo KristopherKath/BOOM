@@ -92,6 +92,11 @@ public:
 	/** The additional force of the player*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
 		float FallingForce = -15.f;
+	
+	/** The Maximum number of Jump for the Character*/
+	UPROPERTY(BlueprintReadWrite, Category = Components)
+		bool inputDisabled = false;
+
 
 	/** Double Jump Handling */
 	void DoubleJump();
