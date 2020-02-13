@@ -21,9 +21,15 @@ public:
 	// Sets default values for this actor's properties
 	AWeapon();
 
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	FString Name;
+
 protected:
 
 	virtual void BeginPlay() override;
+
+
+	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USkeletalMeshComponent* MeshComp;
@@ -78,10 +84,10 @@ protected:
 	float WeaponRange;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-	int AmmoCapacity;
+	int32 AmmoCapacity;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
-	int currentAmmo;
+	int32 currentAmmo;
 
 public:
 
