@@ -7,16 +7,16 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/InputSettings.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "MotionControllerComponent.h"
-#include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Widget.h"
 
 #include "Engine.h"
 #include "Engine/Blueprint.h"
 #include "Weapon.h"
+#include "Pistol.h"
+#include "Shotgun.h"
+#include "RocketLauncher.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -27,11 +27,17 @@ ABOOMCharacter::ABOOMCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
+	CollisionComp = GetCapsuleComponent();
+
+	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &ABOOMCharacter::OnCollision);
+
+	Inventory.SetNum(3, false);
+
 
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
-	
+
 
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
@@ -57,6 +63,7 @@ void ABOOMCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	/*
 	//Spawn a default weapon
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -67,8 +74,41 @@ void ABOOMCharacter::BeginPlay()
 		CurrentWeapon->SetOwner(this);
 		CurrentWeapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponAttachSocketName);
 	}
+	*/
 }
 
+
+void ABOOMCharacter::OnCollision(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	APistol* Pistol = Cast<APistol>(OtherActor);
+	if (Pistol)
+	{
+		Inventory[0] = Pistol->GetClass();
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "Picked up a " + Pistol->Name);
+		Pistol->Destroy();
+	}
+	AShotgun* Shotgun = Cast<AShotgun>(OtherActor);
+	if (Shotgun)
+	{
+		Inventory[1] = Shotgun->GetClass();
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "Picked up a " + Shotgun->Name);
+		Shotgun->Destroy();
+	}
+	ARocketLauncher* RocketLauncher = Cast<ARocketLauncher>(OtherActor);
+	if (RocketLauncher)
+	{
+		Inventory[2] = RocketLauncher->GetClass();
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "Picked up a " + RocketLauncher->Name);
+		RocketLauncher->Destroy();
+	}
+	AWeapon* Rifle = Cast<AWeapon>(OtherActor);
+	if (Rifle)
+	{
+		Inventory[3] = Rifle->GetClass();
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "Picked up a " + Rifle->Name);
+		Rifle->Destroy();
+	}
+}
 
 void ABOOMCharacter::StartFire()
 {

@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "BOOMCharacter.generated.h"
 
+class APistol;
+class AShotgun;
+//class ARocketLauncher;
 class UInputComponent;
 class AWeapon;
 
@@ -14,23 +17,16 @@ class ABOOMCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+
 	
+	UPROPERTY(VisibleAnywhere, Category = Collision)
+	UCapsuleComponent* CollisionComp;
+
 	
 
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FirstPersonCameraComponent;
-
-
-	///** Motion controller (right hand) */
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	//	class UMotionControllerComponent* R_MotionController;
-
-	///** Motion controller (left hand) */
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	//	class UMotionControllerComponent* L_MotionController;
-
-
 
 	UPROPERTY(VisibleAnywhere, Category = "Player")
 	TSubclassOf<AWeapon> StarterWeaponClass;
@@ -45,12 +41,23 @@ class ABOOMCharacter : public ACharacter
 
 	void StopFire();
 
-
-
 	UFUNCTION()
 	virtual void BeginPlay() override;
 
+protected:
+
+	//Inventroy
+	TArray<TSubclassOf<AWeapon>> Inventory;
+
+
 public:
+
+
+	//To Make Collision events
+	UFUNCTION()
+	void OnCollision(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+
 	ABOOMCharacter();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
