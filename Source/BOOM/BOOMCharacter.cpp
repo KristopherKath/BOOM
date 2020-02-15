@@ -25,13 +25,17 @@ DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
 ABOOMCharacter::ABOOMCharacter()
 {
+
+	CurrentWeapon = NULL;
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 	CollisionComp = GetCapsuleComponent();
 
 	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &ABOOMCharacter::OnCollision);
 
-	Inventory.SetNum(3, false);
+	//Sets Inventory size
+	Inventory.SetNum(4, false);
 
 
 	// set our turn rates for input
@@ -63,6 +67,8 @@ void ABOOMCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GiveDefaultWeapon();
+
 	/*
 	//Spawn a default weapon
 	FActorSpawnParameters SpawnParams;
@@ -77,42 +83,138 @@ void ABOOMCharacter::BeginPlay()
 	*/
 }
 
-
+//Detects Collision
 void ABOOMCharacter::OnCollision(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	APistol* Pistol = Cast<APistol>(OtherActor);
-	if (Pistol)
+	//If Cast successful then pick up weapon 
+	AWeapon* Weapon = Cast<AWeapon>(OtherActor);
+	if (Weapon)
 	{
-		Inventory[0] = Pistol->GetClass();
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "Picked up a " + Pistol->Name);
-		Pistol->Destroy();
-	}
-	AShotgun* Shotgun = Cast<AShotgun>(OtherActor);
-	if (Shotgun)
-	{
-		Inventory[1] = Shotgun->GetClass();
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "Picked up a " + Shotgun->Name);
-		Shotgun->Destroy();
-	}
-	ARocketLauncher* RocketLauncher = Cast<ARocketLauncher>(OtherActor);
-	if (RocketLauncher)
-	{
-		Inventory[2] = RocketLauncher->GetClass();
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "Picked up a " + RocketLauncher->Name);
-		RocketLauncher->Destroy();
-	}
-	AWeapon* Rifle = Cast<AWeapon>(OtherActor);
-	if (Rifle)
-	{
-		Inventory[3] = Rifle->GetClass();
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "Picked up a " + Rifle->Name);
-		Rifle->Destroy();
+		ProcessWeaponPickup(Weapon);
 	}
 }
 
+//Picks up weapon and puts it into inventory, else take the ammo
+void ABOOMCharacter::ProcessWeaponPickup(AWeapon* Weapon)
+{
+	if (Weapon != NULL)
+	{
+		if (Inventory[Weapon->Priority] == NULL)
+		{
+			AWeapon* Spawner = GetWorld()->SpawnActor<AWeapon>(Weapon->GetClass());
+			if (Spawner)
+			{
+				Inventory[Spawner->Priority] = Spawner;
+				GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, "Picked up " + Inventory[Spawner->Priority]->Name);
+			}
+			Weapon->Destroy();
+		}
+		else
+		{
+			if (Inventory[Weapon->Priority]->CurrentAmmo >= 0 && Weapon->CurrentAmmo <= (Inventory[Weapon->Priority]->AmmoCapacity - Inventory[Weapon->Priority]->CurrentAmmo))
+			{
+				Inventory[Weapon->Priority]->CurrentAmmo += Weapon->CurrentAmmo;
+				GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "Added " + Weapon->CurrentAmmo);
+				Weapon->Destroy();
+			}
+			if (Inventory[Weapon->Priority]->CurrentAmmo > Inventory[Weapon->Priority]->AmmoCapacity)
+			{
+				Inventory[Weapon->Priority]->CurrentAmmo = Inventory[Weapon->Priority]->AmmoCapacity;
+			}
+		}
+	}
+}
+
+//Make next weapon the current weapon
+void ABOOMCharacter::NextWeapon()
+{
+	if (Inventory[CurrentWeapon->Priority]->Priority != Inventory.Num() - 1)
+	{
+		if (Inventory[CurrentWeapon->Priority + 1] == NULL)
+		{
+			for (int i = CurrentWeapon->Priority + 1; i < Inventory.Num(); ++i)
+			{
+				if (Inventory[i] && Inventory[i]->IsA(AWeapon::StaticClass()))
+				{
+					EquipWeapon(Inventory[i]);
+				}
+			}
+		}
+		else
+		{
+			EquipWeapon(Inventory[CurrentWeapon->Priority + 1]);
+		}
+	}
+	else
+	{
+		EquipWeapon(Inventory[CurrentWeapon->Priority]);
+	}
+}
+
+//Make previous weapon the current weapon
+void ABOOMCharacter::PrevWeapon()
+{
+	if (Inventory[CurrentWeapon->Priority]->Priority != 0)
+	{
+		if (Inventory[CurrentWeapon->Priority - 1] == NULL)
+		{
+			for (int i = CurrentWeapon->Priority - 1; i >= 0; --i)
+			{
+				if (Inventory[i] && Inventory[i]->IsA(AWeapon::StaticClass()))
+				{
+					EquipWeapon(Inventory[i]);
+				}
+			}
+		}
+		else
+		{
+			EquipWeapon(Inventory[CurrentWeapon->Priority - 1]);
+		}
+	}
+	else
+	{
+		EquipWeapon(Inventory[CurrentWeapon->Priority]);
+	}
+}
+
+//Make weapon the weapon to use
+void ABOOMCharacter::EquipWeapon(AWeapon* Weapon)
+{
+	if (CurrentWeapon != NULL)
+	{
+		CurrentWeapon = Inventory[CurrentWeapon->Priority];
+		CurrentWeapon->OnUnEquip();
+		CurrentWeapon = Weapon;
+		Weapon->SetOwningPawn(this);
+		Weapon->OnEquip();
+	}
+	else 
+	{
+		CurrentWeapon = Weapon;
+		CurrentWeapon = Inventory[CurrentWeapon->Priority];
+		CurrentWeapon->SetOwningPawn(this);
+		Weapon->OnEquip(); 
+	}
+}
+
+//Give player a default weapon on Start
+void ABOOMCharacter::GiveDefaultWeapon()
+{
+	AWeapon* Spawner = GetWorld()->SpawnActor<AWeapon>(StarterWeaponClass);
+	if (Spawner)
+	{
+		Inventory[Spawner->Priority] = Spawner;
+		CurrentWeapon = Inventory[Spawner->Priority];
+		CurrentWeapon->SetOwningPawn(this);
+		CurrentWeapon->OnEquip();
+	}
+}
+
+
+
 void ABOOMCharacter::StartFire()
 {
-	if (CurrentWeapon && !inputDisabled)
+	if (CurrentWeapon != NULL && !inputDisabled)
 	{
 		CurrentWeapon->StartFire();
 	}
@@ -151,6 +253,10 @@ void ABOOMCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 {
 	// set up gameplay key bindings
 	check(PlayerInputComponent);
+
+	//Bind Invenotry events
+	PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, this, &ABOOMCharacter::NextWeapon);
+	PlayerInputComponent->BindAction("PrevWeapon", IE_Pressed, this, &ABOOMCharacter::PrevWeapon);
 
 	// Bind jump events
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ABOOMCharacter::Dash);

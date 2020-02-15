@@ -8,7 +8,7 @@
 
 class APistol;
 class AShotgun;
-//class ARocketLauncher;
+class ARocketLauncher;
 class UInputComponent;
 class AWeapon;
 
@@ -19,39 +19,45 @@ class ABOOMCharacter : public ACharacter
 
 
 	
-	UPROPERTY(VisibleAnywhere, Category = Collision)
+	UPROPERTY(EditDefaultsOnly, Category = "Collision")
 	UCapsuleComponent* CollisionComp;
 
-	
+
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
+	TSubclassOf<AWeapon> StarterWeaponClass;
+
+	//Inventroy
+	UPROPERTY(VisibleAnywhere, Category = "Inventory")
+	TArray<class AWeapon*> Inventory;
+
+	void ProcessWeaponPickup(AWeapon *Weapon);
+	void NextWeapon();
+	void PrevWeapon();
+	void EquipWeapon(AWeapon *Weapon);
+	void GiveDefaultWeapon();
 
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FirstPersonCameraComponent;
 
-	UPROPERTY(VisibleAnywhere, Category = "Player")
-	TSubclassOf<AWeapon> StarterWeaponClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	AWeapon* CurrentWeapon;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Player")
-	FName WeaponAttachSocketName;
+	
 
 	void StartFire();
 
 	void StopFire();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category = "Event")
 	virtual void BeginPlay() override;
-
-protected:
-
-	//Inventroy
-	TArray<TSubclassOf<AWeapon>> Inventory;
 
 
 public:
 
+	UPROPERTY(VisibleDefaultsOnly, Category = "Player")
+	FName WeaponAttachSocketName;
 
 	//To Make Collision events
 	UFUNCTION()
@@ -66,7 +72,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
 		class USkeletalMeshComponent* Mesh1P;
 
-public:
+
 
 	/** The Maximum number of Jump for the Character*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
@@ -123,12 +129,14 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 		float AbilityCooldown = 1.f;
 
+
 private:
 	int JumpCounter = 0;
 	int DashCounter = 0;
 	
 	FVector LaunchVec;
 	void SlowDownDash();
+
 public:
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
@@ -177,7 +185,6 @@ protected:
 	void LookUpAtRate(float Rate);
 
 	
-protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	// End of APawn interface
