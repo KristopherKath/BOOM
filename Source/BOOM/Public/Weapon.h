@@ -7,15 +7,19 @@
 #include "Weapon.generated.h"
 
 
-
+class ABOOMCharacter;
 class USkeletalMeshComponent;
 class UDamageType;
 class UParticleSystem;
+
+
 
 UCLASS()
 class BOOM_API AWeapon : public AActor
 {
 	GENERATED_BODY()
+
+
 
 public:
 	// Sets default values for this actor's properties
@@ -24,11 +28,19 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	FString Name;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	int Priority;
+
+
+	void OnEquip();
+	void OnUnEquip();
+
+	void SetOwningPawn(ABOOMCharacter* NewOwner);
+
 protected:
 
 	virtual void BeginPlay() override;
-
-
+	
 	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -83,17 +95,23 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float WeaponRange;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-	int32 AmmoCapacity;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
-	int32 currentAmmo;
+	void AttachToPlayer();
+	void DetachFromPlayer();
+
+	ABOOMCharacter* MyPawn;
 
 public:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	int AmmoCapacity;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
+	int CurrentAmmo;
 
 	void StartFire();
 
 	void StopFire();
+
 	UFUNCTION(BlueprintCallable)
 	void AddAmmo(int addAmount);
 };

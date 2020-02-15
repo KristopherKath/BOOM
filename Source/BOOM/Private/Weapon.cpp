@@ -13,6 +13,7 @@
 #include "Math/UnrealMathUtility.h"
 #include "TimerManager.h"
 #include "BOOM.h"
+#include "BOOMCharacter.h"
 
 
 //Adds Console Command for Weapon Drawing Debuging
@@ -46,20 +47,21 @@ AWeapon::AWeapon()
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	currentAmmo = AmmoCapacity;
+	CurrentAmmo = AmmoCapacity;
 	TimeBetweenShots = 60 / RateOfFire;
 }
 
 void AWeapon::Fire()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, "Firing"); 
 	// Trace the world from pawn eyes to crosshair location (center screen)
-	AActor* MyOwner = GetOwner();
-	if (MyOwner && currentAmmo > 0)
+	//* MyOwner = GetOwner();
+	if (MyPawn && CurrentAmmo > 0)
 	{
 		// Retrieves the eye location and rotation of actor
 		FVector EyeLocation;
 		FRotator EyeRotation;
-		MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+		MyPawn->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 
 		//Get Direction
 		FVector ShotDirection = EyeRotation.Vector();
@@ -75,7 +77,7 @@ void AWeapon::Fire()
 		Useful for getting specific hit sections for things like a headshot */
 		FCollisionQueryParams QueryParams;
 		//Ignore Character & Weapon
-		QueryParams.AddIgnoredActor(MyOwner);
+		QueryParams.AddIgnoredActor(MyPawn);
 		QueryParams.AddIgnoredActor(this);
 		QueryParams.bTraceComplex = true;
 		QueryParams.bReturnPhysicalMaterial = true;
@@ -86,9 +88,7 @@ void AWeapon::Fire()
 		if (GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, TRACE_WEAPON, QueryParams))
 		{
 			// Blocking hit! Process damage
-
 			AActor* HitActor = Hit.GetActor();
-
 
 			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
 
@@ -100,7 +100,7 @@ void AWeapon::Fire()
 			}
 
 			//Applies damage to hit actor
-			UGameplayStatics::ApplyPointDamage(HitActor, ActualDamage, ShotDirection, Hit, MyOwner->GetInstigatorController(), this, DamageType);
+			UGameplayStatics::ApplyPointDamage(HitActor, ActualDamage, ShotDirection, Hit, MyPawn->GetInstigatorController(), this, DamageType);
 
 
 			//Determine Surface Type
@@ -138,9 +138,49 @@ void AWeapon::Fire()
 
 		LastFireTime = GetWorld()->TimeSeconds;
 
-		currentAmmo--;
+		CurrentAmmo--;
 	}
 
+}
+
+//Makes this weapon's owner the pawn passed in
+void AWeapon::SetOwningPawn(ABOOMCharacter* NewOwner)
+{
+	if (MyPawn != NewOwner)
+	{
+		Instigator = NewOwner;
+		MyPawn = NewOwner;
+	}
+}
+
+//Attaches the weapon to the character
+void AWeapon::AttachToPlayer()
+{
+	if (MyPawn)
+	{
+		DetachFromPlayer();
+
+		USkeletalMeshComponent* Character = MyPawn->GetMesh1P();
+		MeshComp->SetHiddenInGame(false);
+		MeshComp->AttachTo(Character, "Weapon_Socket");
+	}
+}
+
+//Removes the weapon from character and hides it
+void AWeapon::DetachFromPlayer()
+{
+	MeshComp->DetachFromParent();
+	MeshComp->SetHiddenInGame(true);
+}
+
+void AWeapon::OnEquip()
+{
+	AttachToPlayer();
+}
+
+void AWeapon::OnUnEquip()
+{
+	DetachFromPlayer();
 }
 
 void AWeapon::StartFire()
@@ -194,5 +234,5 @@ void AWeapon::PlayFireEffects(FVector TracerEndPoint)
 
 }
 void AWeapon::AddAmmo(int addAmount) {
-	currentAmmo = FMath::Clamp(currentAmmo + addAmount, 0, AmmoCapacity);
+	CurrentAmmo = FMath::Clamp(CurrentAmmo + addAmount, 0, AmmoCapacity);
 }
