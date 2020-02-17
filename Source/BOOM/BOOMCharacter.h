@@ -11,6 +11,7 @@ class AShotgun;
 class ARocketLauncher;
 class UInputComponent;
 class AWeapon;
+class AAmmoPickup;
 
 UCLASS(config=Game)
 class ABOOMCharacter : public ACharacter
@@ -35,6 +36,8 @@ class ABOOMCharacter : public ACharacter
 	void PrevWeapon();
 	void EquipWeapon(AWeapon *Weapon);
 	void GiveDefaultWeapon();
+
+	void ProcessAmmoPickup(AAmmoPickup *Ammo);
 
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

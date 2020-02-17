@@ -18,6 +18,7 @@
 #include "Shotgun.h"
 #include "GameFramework/Actor.h"
 #include "RocketLauncher.h"
+#include "AmmoPickup.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -69,19 +70,6 @@ void ABOOMCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	GiveDefaultWeapon();
-
-	/*
-	//Spawn a default weapon
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-	CurrentWeapon = GetWorld()->SpawnActor<AWeapon>(StarterWeaponClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
-	if (CurrentWeapon)
-	{
-		CurrentWeapon->SetOwner(this);
-		CurrentWeapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponAttachSocketName);
-	}
-	*/
 }
 
 //Detects Collision
@@ -92,6 +80,11 @@ void ABOOMCharacter::OnCollision(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	if (Weapon)
 	{
 		ProcessWeaponPickup(Weapon);
+	}
+	AAmmoPickup* Ammo = Cast<AAmmoPickup>(OtherActor);
+	if (Ammo)
+	{
+		ProcessAmmoPickup(Ammo);
 	}
 }
 
@@ -219,6 +212,31 @@ void ABOOMCharacter::GiveDefaultWeapon()
 	}
 }
 
+//Looks for ammo type in inventory and then adds it weapons ammo
+void ABOOMCharacter::ProcessAmmoPickup(AAmmoPickup* Ammo)
+{
+	if (Ammo != NULL)
+	{
+		if (CurrentWeapon->AmmoType == Ammo->AmmoType)
+		{
+			CurrentWeapon->AddAmmo(Ammo->AmmoStock);
+			Ammo->Destroy();
+		}
+		else {
+			for (int i = 0; i < Inventory.Num(); ++i)
+			{
+				if (Inventory[i] != NULL) {
+					if (Inventory[i]->AmmoType == Ammo->AmmoType)
+					{
+						Inventory[i]->AddAmmo(Ammo->AmmoStock);
+						Ammo->Destroy();
+					}
+				}
+			}
+		}
+	}
+}
+
 
 
 void ABOOMCharacter::StartFire()
@@ -287,7 +305,6 @@ void ABOOMCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABOOMCharacter::LookUpAtRate);
 }
-
 
 void ABOOMCharacter::DoubleJump() {
 	if (JumpCounter < MaxJump && !inputDisabled) {
