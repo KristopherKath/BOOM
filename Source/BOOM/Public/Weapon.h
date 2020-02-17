@@ -13,6 +13,16 @@ class UDamageType;
 class UParticleSystem;
 
 
+UENUM(BlueprintType)
+namespace EWeaponAmmoTypes {
+	enum WeaponAmmoType
+	{
+		ERifle			UMETA(DisplayName = "Rifle"),
+		EPistol			UMETA(DisplayName = "Pistol"),
+		ERocket			UMETA(DisplayName = "Rocket Launcher"),
+		EShotgun		UMETA(DisplayName = "Shotgun"),
+	};
+}
 
 UCLASS()
 class BOOM_API AWeapon : public AActor
@@ -27,6 +37,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	FString Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	TEnumAsByte<EWeaponAmmoTypes::WeaponAmmoType> AmmoType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 	int Priority;
