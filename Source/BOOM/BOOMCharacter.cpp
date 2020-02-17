@@ -10,12 +10,13 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Widget.h"
-
+#include "Components/BoxComponent.h"
 #include "Engine.h"
 #include "Engine/Blueprint.h"
 #include "Weapon.h"
 #include "Pistol.h"
 #include "Shotgun.h"
+#include "GameFramework/Actor.h"
 #include "RocketLauncher.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
@@ -99,6 +100,10 @@ void ABOOMCharacter::ProcessWeaponPickup(AWeapon* Weapon)
 {
 	if (Weapon != NULL)
 	{
+		//Turns off collision on weapon picked up (?)
+		UBoxComponent* CollisionComp = Cast<UBoxComponent>(Weapon->GetComponentByClass(UBoxComponent::StaticClass()));
+		CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 		if (Inventory[Weapon->Priority] == NULL)
 		{
 			AWeapon* Spawner = GetWorld()->SpawnActor<AWeapon>(Weapon->GetClass());
@@ -177,11 +182,13 @@ void ABOOMCharacter::PrevWeapon()
 	}
 }
 
-//Make weapon the weapon to use
+//Make given weapon the weapon for player to use
 void ABOOMCharacter::EquipWeapon(AWeapon* Weapon)
 {
 	if (CurrentWeapon != NULL)
 	{
+		UBoxComponent* CollisionComp = Cast<UBoxComponent>(Weapon->GetComponentByClass(UBoxComponent::StaticClass()));
+		CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		CurrentWeapon = Inventory[CurrentWeapon->Priority];
 		CurrentWeapon->OnUnEquip();
 		CurrentWeapon = Weapon;
@@ -190,6 +197,8 @@ void ABOOMCharacter::EquipWeapon(AWeapon* Weapon)
 	}
 	else 
 	{
+		UBoxComponent* CollisionComp = Cast<UBoxComponent>(Weapon->GetComponentByClass(UBoxComponent::StaticClass()));
+		CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		CurrentWeapon = Weapon;
 		CurrentWeapon = Inventory[CurrentWeapon->Priority];
 		CurrentWeapon->SetOwningPawn(this);

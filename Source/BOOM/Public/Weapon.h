@@ -82,7 +82,6 @@ protected:
 
 	FTimerHandle TimerHandle_TimeBetweenShots;
 
-
 	float TimeBetweenShots;
 
 	float LastFireTime;
