@@ -233,6 +233,8 @@ void AWeapon::PlayFireEffects(FVector TracerEndPoint)
 	}
 
 }
-void AWeapon::AddAmmo(int addAmount) {
+
+void AWeapon::AddAmmo(int addAmount) 
+{
 	CurrentAmmo = FMath::Clamp(CurrentAmmo + addAmount, 0, AmmoCapacity);
 }
