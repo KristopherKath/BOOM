@@ -10,13 +10,15 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Widget.h"
-
+#include "Components/BoxComponent.h"
 #include "Engine.h"
 #include "Engine/Blueprint.h"
 #include "Weapon.h"
 #include "Pistol.h"
 #include "Shotgun.h"
+#include "GameFramework/Actor.h"
 #include "RocketLauncher.h"
+#include "AmmoPickup.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -68,19 +70,6 @@ void ABOOMCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	GiveDefaultWeapon();
-
-	/*
-	//Spawn a default weapon
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-	CurrentWeapon = GetWorld()->SpawnActor<AWeapon>(StarterWeaponClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
-	if (CurrentWeapon)
-	{
-		CurrentWeapon->SetOwner(this);
-		CurrentWeapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponAttachSocketName);
-	}
-	*/
 }
 
 //Detects Collision
@@ -92,6 +81,11 @@ void ABOOMCharacter::OnCollision(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	{
 		ProcessWeaponPickup(Weapon);
 	}
+	AAmmoPickup* Ammo = Cast<AAmmoPickup>(OtherActor);
+	if (Ammo)
+	{
+		ProcessAmmoPickup(Ammo);
+	}
 }
 
 //Picks up weapon and puts it into inventory, else take the ammo
@@ -99,6 +93,10 @@ void ABOOMCharacter::ProcessWeaponPickup(AWeapon* Weapon)
 {
 	if (Weapon != NULL)
 	{
+		//Turns off collision on weapon picked up (?)
+		UBoxComponent* CollisionComp = Cast<UBoxComponent>(Weapon->GetComponentByClass(UBoxComponent::StaticClass()));
+		CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 		if (Inventory[Weapon->Priority] == NULL)
 		{
 			AWeapon* Spawner = GetWorld()->SpawnActor<AWeapon>(Weapon->GetClass());
@@ -177,11 +175,13 @@ void ABOOMCharacter::PrevWeapon()
 	}
 }
 
-//Make weapon the weapon to use
+//Make given weapon the weapon for player to use
 void ABOOMCharacter::EquipWeapon(AWeapon* Weapon)
 {
 	if (CurrentWeapon != NULL)
 	{
+		UBoxComponent* CollisionComp = Cast<UBoxComponent>(Weapon->GetComponentByClass(UBoxComponent::StaticClass()));
+		CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		CurrentWeapon = Inventory[CurrentWeapon->Priority];
 		CurrentWeapon->OnUnEquip();
 		CurrentWeapon = Weapon;
@@ -190,6 +190,8 @@ void ABOOMCharacter::EquipWeapon(AWeapon* Weapon)
 	}
 	else 
 	{
+		UBoxComponent* CollisionComp = Cast<UBoxComponent>(Weapon->GetComponentByClass(UBoxComponent::StaticClass()));
+		CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		CurrentWeapon = Weapon;
 		CurrentWeapon = Inventory[CurrentWeapon->Priority];
 		CurrentWeapon->SetOwningPawn(this);
@@ -207,6 +209,31 @@ void ABOOMCharacter::GiveDefaultWeapon()
 		CurrentWeapon = Inventory[Spawner->Priority];
 		CurrentWeapon->SetOwningPawn(this);
 		CurrentWeapon->OnEquip();
+	}
+}
+
+//Looks for ammo type in inventory and then adds it weapons ammo
+void ABOOMCharacter::ProcessAmmoPickup(AAmmoPickup* Ammo)
+{
+	if (Ammo != NULL)
+	{
+		if (CurrentWeapon->AmmoType == Ammo->AmmoType)
+		{
+			CurrentWeapon->AddAmmo(Ammo->AmmoStock);
+			Ammo->Destroy();
+		}
+		else {
+			for (int i = 0; i < Inventory.Num(); ++i)
+			{
+				if (Inventory[i] != NULL) {
+					if (Inventory[i]->AmmoType == Ammo->AmmoType)
+					{
+						Inventory[i]->AddAmmo(Ammo->AmmoStock);
+						Ammo->Destroy();
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -278,7 +305,6 @@ void ABOOMCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABOOMCharacter::LookUpAtRate);
 }
-
 
 void ABOOMCharacter::DoubleJump() {
 	if (JumpCounter < MaxJump && !inputDisabled) {

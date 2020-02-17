@@ -53,9 +53,7 @@ void AWeapon::BeginPlay()
 
 void AWeapon::Fire()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, "Firing"); 
 	// Trace the world from pawn eyes to crosshair location (center screen)
-	//* MyOwner = GetOwner();
 	if (MyPawn && CurrentAmmo > 0)
 	{
 		// Retrieves the eye location and rotation of actor
@@ -233,6 +231,11 @@ void AWeapon::PlayFireEffects(FVector TracerEndPoint)
 	}
 
 }
-void AWeapon::AddAmmo(int addAmount) {
+
+void AWeapon::AddAmmo(int addAmount) 
+{
+	
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Adding " + addAmount));
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("to " + Name));
 	CurrentAmmo = FMath::Clamp(CurrentAmmo + addAmount, 0, AmmoCapacity);
 }
