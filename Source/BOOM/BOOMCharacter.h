@@ -44,8 +44,7 @@ class ABOOMCharacter : public ACharacter
 	class UCameraComponent* FirstPersonCameraComponent;
 
 
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	AWeapon* CurrentWeapon;
+
 
 	
 
@@ -58,6 +57,9 @@ class ABOOMCharacter : public ACharacter
 
 
 public:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	AWeapon* CurrentWeapon;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "Player")
 	FName WeaponAttachSocketName;
@@ -73,7 +75,7 @@ public:
 
 	/** Pawn mesh: 1st person view (arms; seen only by self) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
-		class USkeletalMeshComponent* Mesh1P;
+	class USkeletalMeshComponent* Mesh1P;
 
 
 
