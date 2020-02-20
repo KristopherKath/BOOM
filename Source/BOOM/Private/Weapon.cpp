@@ -123,6 +123,7 @@ void AWeapon::Fire()
 			{
 				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SelectedEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
 			}
+
 			//Change end point if we hit something
 			TracerEndPoint = Hit.ImpactPoint;
 		}

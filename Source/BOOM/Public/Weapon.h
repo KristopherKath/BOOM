@@ -12,6 +12,7 @@ class USkeletalMeshComponent;
 class UDamageType;
 class UParticleSystem;
 class USoundCue;
+class UCameraShake;
 
 UENUM(BlueprintType)
 namespace EWeaponAmmoTypes {
