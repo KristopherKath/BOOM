@@ -168,11 +168,7 @@ protected:
 
 
 
-	/** Handles moving forward/backward */
-	void MoveForward(float Val);
 
-	/** Handles stafing movement, left and right */
-	void MoveRight(float Val);
 
 	/**
 	 * Called via input to turn at a given rate.
@@ -194,6 +190,13 @@ protected:
 
 
 public:
+	/** Handles moving forward/backward */
+	UFUNCTION(BlueprintCallable)
+		void MoveForward(float Val);
+
+	/** Handles stafing movement, left and right */
+	UFUNCTION(BlueprintCallable)
+		void MoveRight(float Val);
 	/** Returns Mesh1P subobject **/
 	FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
