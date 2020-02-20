@@ -18,10 +18,6 @@
 		{
 			"Name": "ApexDestruction",
 			"Enabled": true
-		},
-		{
-			"Name": "MultiUserClient",
-			"Enabled": true
 		}
 	]
 }
