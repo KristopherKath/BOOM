@@ -42,12 +42,7 @@ class ABOOMCharacter : public ACharacter
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FirstPersonCameraComponent;
-
-
-
-
 	
-
 	void StartFire();
 
 	void StopFire();
