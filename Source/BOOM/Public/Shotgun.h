@@ -13,5 +13,16 @@ UCLASS()
 class BOOM_API AShotgun : public AWeapon
 {
 	GENERATED_BODY()
-	
+	/*
+protected:
+
+	//Plays sound effect
+	void PlayWeaponSound(USoundCue* Sound) override;
+
+	float SpreadAmount;
+
+	void Fire() override;
+
+	virtual void Tick(float DeltaTime) override;
+	*/
 };
