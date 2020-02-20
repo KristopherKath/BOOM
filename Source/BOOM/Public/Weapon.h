@@ -99,6 +99,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float BaseDamage;
 
+	UFUNCTION(BlueprintCallable)
 	virtual void Fire();
 
 	FTimerHandle TimerHandle_TimeBetweenShots;
