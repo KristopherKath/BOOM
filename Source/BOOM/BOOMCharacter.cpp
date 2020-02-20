@@ -337,7 +337,7 @@ void ABOOMCharacter::DoubleJump() {
 	if (JumpCounter < MaxJump && !inputDisabled) {
 		JumpCounter++;
 		LaunchVec = GetLastMovementInputVector();
-		LaunchCharacter(FVector(LaunchVec.X*ForwardJumpForce, LaunchVec.Y*ForwardJumpForce, JumpForce), true, true);
+		LaunchCharacter(FVector(LaunchVec.X*ForwardJumpForce, LaunchVec.Y*ForwardJumpForce, JumpForce), false, true);
 	}
 }
 
