@@ -44,7 +44,7 @@ class ABOOMCharacter : public ACharacter
 	class UCameraComponent* FirstPersonCameraComponent;
 	
 	void StartFire();
-
+	UFUNCTION(BlueprintCallable, Category = "Event")
 	void StopFire();
 
 	UFUNCTION(BlueprintCallable, Category = "Event")
