@@ -105,7 +105,7 @@ void AWeapon::Fire()
 			UParticleSystem* SelectedEffect = nullptr;
 
 			//Select what impact effect to play.
-				//Case names defined in CoopHordeGame.h
+				//Case names defined in BOOM.h
 			switch (SurfaceType)
 			{
 			case SURFACE_FLESHDEFAULT:
