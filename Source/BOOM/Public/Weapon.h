@@ -11,7 +11,7 @@ class ABOOMCharacter;
 class USkeletalMeshComponent;
 class UDamageType;
 class UParticleSystem;
-
+class USoundCue;
 
 UENUM(BlueprintType)
 namespace EWeaponAmmoTypes {
@@ -87,6 +87,14 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<UCameraShake> FireCamShake;
+	
+	//Sound effect
+	UPROPERTY(EditDefaultsOnly, Category = Config)
+	USoundCue* FireSound;
+
+	//Plays sound effect
+	void PlayWeaponSound(USoundCue* Sound);
+
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float BaseDamage;

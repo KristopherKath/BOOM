@@ -14,6 +14,7 @@
 #include "TimerManager.h"
 #include "BOOM.h"
 #include "BOOMCharacter.h"
+#include "Sound/SoundCue.h"
 
 
 //Adds Console Command for Weapon Drawing Debuging
@@ -229,9 +230,21 @@ void AWeapon::PlayFireEffects(FVector TracerEndPoint)
 		}
 	}
 
+	PlayWeaponSound(FireSound);
+
 }
 
 void AWeapon::AddAmmo(int addAmount) 
 {
 	CurrentAmmo = FMath::Clamp(CurrentAmmo + addAmount, 0, AmmoCapacity);
+}
+
+
+void AWeapon::PlayWeaponSound(USoundCue* Sound)
+{
+	UAudioComponent* AC = NULL;
+	if (Sound && MyPawn)
+	{
+		UGameplayStatics::SpawnSoundAttached(Sound, MyPawn->GetRootComponent());
+	}
 }
