@@ -62,6 +62,7 @@ ABOOMCharacter::ABOOMCharacter()
 
 	WeaponAttachSocketName = "Weapon_Socket";
 
+	bStartWithDefaultWeapon = true;
 }
 
 
@@ -69,7 +70,10 @@ void ABOOMCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GiveDefaultWeapon();
+	if (bStartWithDefaultWeapon)
+	{
+		GiveDefaultWeapon();
+	}
 }
 
 //Detects Collision
@@ -91,14 +95,17 @@ void ABOOMCharacter::OnCollision(UPrimitiveComponent* OverlappedComp, AActor* Ot
 //Picks up weapon and puts it into inventory, else take the ammo
 void ABOOMCharacter::ProcessWeaponPickup(AWeapon* Weapon)
 {
+	//If weapon exists
 	if (Weapon != NULL)
 	{
 		//Turns off collision on weapon picked up (?)
 		UBoxComponent* CollisionComp = Cast<UBoxComponent>(Weapon->GetComponentByClass(UBoxComponent::StaticClass()));
 		CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+		//If the weapon is not already picked up
 		if (Inventory[Weapon->Priority] == NULL)
 		{
+			//Add weapon to inventory
 			AWeapon* Spawner = GetWorld()->SpawnActor<AWeapon>(Weapon->GetClass());
 			if (Spawner)
 			{
@@ -106,6 +113,12 @@ void ABOOMCharacter::ProcessWeaponPickup(AWeapon* Weapon)
 				GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, "Picked up " + Inventory[Spawner->Priority]->Name);
 			}
 			Weapon->Destroy();
+
+			//If there is no current weapon equipped then equip this weapon
+			if (CurrentWeapon == NULL)
+			{
+				EquipWeapon(Inventory[Spawner->Priority]);
+			}
 		}
 		else
 		{
@@ -180,10 +193,15 @@ void ABOOMCharacter::EquipWeapon(AWeapon* Weapon)
 {
 	if (CurrentWeapon != NULL)
 	{
+		//Turn off weapon collision after picking up
 		UBoxComponent* CollisionComp = Cast<UBoxComponent>(Weapon->GetComponentByClass(UBoxComponent::StaticClass()));
 		CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		//Unequip our weapon
 		CurrentWeapon = Inventory[CurrentWeapon->Priority];
 		CurrentWeapon->OnUnEquip();
+
+		//Set new current weapon and equip
 		CurrentWeapon = Weapon;
 		Weapon->SetOwningPawn(this);
 		Weapon->OnEquip();
@@ -192,6 +210,8 @@ void ABOOMCharacter::EquipWeapon(AWeapon* Weapon)
 	{
 		UBoxComponent* CollisionComp = Cast<UBoxComponent>(Weapon->GetComponentByClass(UBoxComponent::StaticClass()));
 		CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		//Equip given weapon
 		CurrentWeapon = Weapon;
 		CurrentWeapon = Inventory[CurrentWeapon->Priority];
 		CurrentWeapon->SetOwningPawn(this);
@@ -202,6 +222,7 @@ void ABOOMCharacter::EquipWeapon(AWeapon* Weapon)
 //Give player a default weapon on Start
 void ABOOMCharacter::GiveDefaultWeapon()
 {
+	//Spawns and equips a default weapon
 	AWeapon* Spawner = GetWorld()->SpawnActor<AWeapon>(StarterWeaponClass);
 	if (Spawner)
 	{
@@ -215,21 +236,27 @@ void ABOOMCharacter::GiveDefaultWeapon()
 //Looks for ammo type in inventory and then adds it weapons ammo
 void ABOOMCharacter::ProcessAmmoPickup(AAmmoPickup* Ammo)
 {
-	if (Ammo != NULL)
+	//If a weapon exists then add the ammo
+	if (CurrentWeapon)
 	{
-		if (CurrentWeapon->AmmoType == Ammo->AmmoType)
+		if (Ammo != NULL)
 		{
-			CurrentWeapon->AddAmmo(Ammo->AmmoStock);
-			Ammo->Destroy();
-		}
-		else {
-			for (int i = 0; i < Inventory.Num(); ++i)
+			//Add ammo for equipped weapon
+			if (CurrentWeapon->AmmoType == Ammo->AmmoType)
 			{
-				if (Inventory[i] != NULL) {
-					if (Inventory[i]->AmmoType == Ammo->AmmoType)
-					{
-						Inventory[i]->AddAmmo(Ammo->AmmoStock);
-						Ammo->Destroy();
+				CurrentWeapon->AddAmmo(Ammo->AmmoStock);
+				Ammo->Destroy();
+			}
+			//Add ammo for weapon in inventory
+			else {
+				for (int i = 0; i < Inventory.Num(); ++i)
+				{
+					if (Inventory[i] != NULL) {
+						if (Inventory[i]->AmmoType == Ammo->AmmoType)
+						{
+							Inventory[i]->AddAmmo(Ammo->AmmoStock);
+							Ammo->Destroy();
+						}
 					}
 				}
 			}

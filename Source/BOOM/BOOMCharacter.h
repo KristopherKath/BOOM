@@ -42,14 +42,9 @@ class ABOOMCharacter : public ACharacter
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FirstPersonCameraComponent;
-
-
-
-
 	
-
 	void StartFire();
-
+	UFUNCTION(BlueprintCallable, Category = "Event")
 	void StopFire();
 
 	UFUNCTION(BlueprintCallable, Category = "Event")
@@ -77,7 +72,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
 	class USkeletalMeshComponent* Mesh1P;
 
-
+	// Determine if player starts with a weapon or not
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
+	bool bStartWithDefaultWeapon;
 
 	/** The Maximum number of Jump for the Character*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)

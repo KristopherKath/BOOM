@@ -105,7 +105,7 @@ void AWeapon::Fire()
 			UParticleSystem* SelectedEffect = nullptr;
 
 			//Select what impact effect to play.
-				//Case names defined in CoopHordeGame.h
+				//Case names defined in BOOM.h
 			switch (SurfaceType)
 			{
 			case SURFACE_FLESHDEFAULT:
@@ -220,10 +220,9 @@ void AWeapon::PlayFireEffects(FVector TracerEndPoint)
 	}
 
 	//Used for Shaking the player camera
-	APawn* MyOwner = Cast<APawn>(GetOwner());
-	if (MyOwner)
+	if (MyPawn)
 	{
-		APlayerController* PC = Cast<APlayerController>(MyOwner->GetController());
+		APlayerController* PC = Cast<APlayerController>(MyPawn->GetController());
 		if (PC)
 		{
 			PC->ClientPlayCameraShake(FireCamShake);
@@ -234,8 +233,5 @@ void AWeapon::PlayFireEffects(FVector TracerEndPoint)
 
 void AWeapon::AddAmmo(int addAmount) 
 {
-	
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Adding " + addAmount));
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("to " + Name));
 	CurrentAmmo = FMath::Clamp(CurrentAmmo + addAmount, 0, AmmoCapacity);
 }
