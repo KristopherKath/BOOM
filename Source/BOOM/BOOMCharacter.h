@@ -72,7 +72,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
 	class USkeletalMeshComponent* Mesh1P;
 
-
+	// Determine if player starts with a weapon or not
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
+	bool bStartWithDefaultWeapon;
 
 	/** The Maximum number of Jump for the Character*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
