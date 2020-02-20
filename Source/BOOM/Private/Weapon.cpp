@@ -220,12 +220,15 @@ void AWeapon::PlayFireEffects(FVector TracerEndPoint)
 	}
 
 	//Used for Shaking the player camera
-	APawn* MyOwner = Cast<APawn>(GetOwner());
-	if (MyOwner)
+	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "Checking Cast");
+	//APawn* MyOwner = Cast<APawn>(GetOwner());
+	if (MyPawn)
 	{
-		APlayerController* PC = Cast<APlayerController>(MyOwner->GetController());
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "Got Owner");
+		APlayerController* PC = Cast<APlayerController>(MyPawn->GetController());
 		if (PC)
 		{
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "Got PlayerController");
 			PC->ClientPlayCameraShake(FireCamShake);
 		}
 	}
