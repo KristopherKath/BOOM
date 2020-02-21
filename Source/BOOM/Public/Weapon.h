@@ -55,7 +55,7 @@ protected:
 
 	virtual void BeginPlay() override;
 	
-	
+	int BulletsPerShot;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USkeletalMeshComponent* MeshComp;
@@ -94,13 +94,12 @@ protected:
 	USoundCue* FireSound;
 
 	//Plays sound effect
-	void PlayWeaponSound(USoundCue* Sound);
+	virtual void PlayWeaponSound(USoundCue* Sound);
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float BaseDamage;
 
-	UFUNCTION(BlueprintCallable)
 	virtual void Fire();
 
 	FTimerHandle TimerHandle_TimeBetweenShots;
