@@ -15,6 +15,7 @@
 #include "BOOM.h"
 #include "BOOMCharacter.h"
 #include "Sound/SoundCue.h"
+#include "Math/Rotator.h"
 
 
 //Adds Console Command for Weapon Drawing Debuging
@@ -123,6 +124,7 @@ void AWeapon::Fire()
 			{
 				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SelectedEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
 			}
+
 			//Change end point if we hit something
 			TracerEndPoint = Hit.ImpactPoint;
 		}
@@ -160,6 +162,11 @@ void AWeapon::AttachToPlayer()
 		DetachFromPlayer();
 
 		USkeletalMeshComponent* Character = MyPawn->GetMesh1P();
+		if (Name == "Pistol")
+		{
+			FRotator PistolRotation(0, 90, 0);
+			MeshComp->AddLocalRotation(PistolRotation);
+		}
 		MeshComp->SetHiddenInGame(false);
 		MeshComp->AttachTo(Character, "Weapon_Socket");
 	}
