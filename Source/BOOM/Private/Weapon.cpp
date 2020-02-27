@@ -193,6 +193,7 @@ void AWeapon::StartFire()
 {
 	//Pick which ever value is greatest. Left or 0. Reason being is that negative value is default in SetTimer()
 	//And if we use that then it would disregaurd the FirstDelay function we want.
+	isFiring = true;
 	float FirstDelay = FMath::Max(LastFireTime + TimeBetweenShots - GetWorld()->TimeSeconds, 0.0f);
 	//Every n second we call Fire()
 	GetWorldTimerManager().SetTimer(TimerHandle_TimeBetweenShots, this, &AWeapon::Fire, TimeBetweenShots, true, FirstDelay);
@@ -200,6 +201,7 @@ void AWeapon::StartFire()
 
 void AWeapon::StopFire()
 {
+	isFiring = false;
 	GetWorldTimerManager().ClearTimer(TimerHandle_TimeBetweenShots);
 }
 

@@ -128,7 +128,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
 	int CurrentAmmo;
-
+	
+	/** Boolean value for the weapon if it is firing*/
+	UPROPERTY(BlueprintReadWrite, Category = "Weapon")
+		bool isFiring = false;
+	
+	
 	void StartFire();
 
 	void StopFire();
