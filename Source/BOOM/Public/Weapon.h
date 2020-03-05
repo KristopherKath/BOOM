@@ -12,6 +12,7 @@ class USkeletalMeshComponent;
 class UDamageType;
 class UParticleSystem;
 class USoundCue;
+class UCameraShake;
 
 UENUM(BlueprintType)
 namespace EWeaponAmmoTypes {
@@ -54,7 +55,7 @@ protected:
 
 	virtual void BeginPlay() override;
 	
-	
+	int BulletsPerShot;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USkeletalMeshComponent* MeshComp;
@@ -93,7 +94,7 @@ protected:
 	USoundCue* FireSound;
 
 	//Plays sound effect
-	void PlayWeaponSound(USoundCue* Sound);
+	virtual void PlayWeaponSound(USoundCue* Sound);
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
@@ -127,7 +128,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
 	int CurrentAmmo;
-
+	
+	/** Boolean value for the weapon if it is firing*/
+	UPROPERTY(BlueprintReadWrite, Category = "Weapon")
+		bool isFiring = false;
+	
+	
 	void StartFire();
 
 	void StopFire();

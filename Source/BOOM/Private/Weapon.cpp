@@ -15,6 +15,7 @@
 #include "BOOM.h"
 #include "BOOMCharacter.h"
 #include "Sound/SoundCue.h"
+#include "Math/Rotator.h"
 
 
 //Adds Console Command for Weapon Drawing Debuging
@@ -123,6 +124,7 @@ void AWeapon::Fire()
 			{
 				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SelectedEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
 			}
+
 			//Change end point if we hit something
 			TracerEndPoint = Hit.ImpactPoint;
 		}
@@ -160,6 +162,11 @@ void AWeapon::AttachToPlayer()
 		DetachFromPlayer();
 
 		USkeletalMeshComponent* Character = MyPawn->GetMesh1P();
+		if (Name == "Pistol")
+		{
+			FRotator PistolRotation(0, 90, 0);
+			MeshComp->AddLocalRotation(PistolRotation);
+		}
 		MeshComp->SetHiddenInGame(false);
 		MeshComp->AttachTo(Character, "Weapon_Socket");
 	}
@@ -186,6 +193,7 @@ void AWeapon::StartFire()
 {
 	//Pick which ever value is greatest. Left or 0. Reason being is that negative value is default in SetTimer()
 	//And if we use that then it would disregaurd the FirstDelay function we want.
+	isFiring = true;
 	float FirstDelay = FMath::Max(LastFireTime + TimeBetweenShots - GetWorld()->TimeSeconds, 0.0f);
 	//Every n second we call Fire()
 	GetWorldTimerManager().SetTimer(TimerHandle_TimeBetweenShots, this, &AWeapon::Fire, TimeBetweenShots, true, FirstDelay);
@@ -193,6 +201,7 @@ void AWeapon::StartFire()
 
 void AWeapon::StopFire()
 {
+	isFiring = false;
 	GetWorldTimerManager().ClearTimer(TimerHandle_TimeBetweenShots);
 }
 

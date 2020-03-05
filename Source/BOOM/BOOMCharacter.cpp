@@ -105,6 +105,7 @@ void ABOOMCharacter::ProcessWeaponPickup(AWeapon* Weapon)
 		//If the weapon is not already picked up
 		if (Inventory[Weapon->Priority] == NULL)
 		{
+
 			//Add weapon to inventory
 			AWeapon* Spawner = GetWorld()->SpawnActor<AWeapon>(Weapon->GetClass());
 			if (Spawner)
@@ -139,52 +140,58 @@ void ABOOMCharacter::ProcessWeaponPickup(AWeapon* Weapon)
 //Make next weapon the current weapon
 void ABOOMCharacter::NextWeapon()
 {
-	if (Inventory[CurrentWeapon->Priority]->Priority != Inventory.Num() - 1)
+	if (CurrentWeapon != NULL)
 	{
-		if (Inventory[CurrentWeapon->Priority + 1] == NULL)
+		if (Inventory[CurrentWeapon->Priority]->Priority != Inventory.Num() - 1)
 		{
-			for (int i = CurrentWeapon->Priority + 1; i < Inventory.Num(); ++i)
+			if (Inventory[CurrentWeapon->Priority + 1] == NULL)
 			{
-				if (Inventory[i] && Inventory[i]->IsA(AWeapon::StaticClass()))
+				for (int i = CurrentWeapon->Priority + 1; i < Inventory.Num(); ++i)
 				{
-					EquipWeapon(Inventory[i]);
+					if (Inventory[i] && Inventory[i]->IsA(AWeapon::StaticClass()))
+					{
+						EquipWeapon(Inventory[i]);
+					}
 				}
+			}
+			else
+			{
+				EquipWeapon(Inventory[CurrentWeapon->Priority + 1]);
 			}
 		}
 		else
 		{
-			EquipWeapon(Inventory[CurrentWeapon->Priority + 1]);
+			EquipWeapon(Inventory[CurrentWeapon->Priority]);
 		}
-	}
-	else
-	{
-		EquipWeapon(Inventory[CurrentWeapon->Priority]);
 	}
 }
 
 //Make previous weapon the current weapon
 void ABOOMCharacter::PrevWeapon()
 {
-	if (Inventory[CurrentWeapon->Priority]->Priority != 0)
+	if (CurrentWeapon != NULL)
 	{
-		if (Inventory[CurrentWeapon->Priority - 1] == NULL)
+		if (Inventory[CurrentWeapon->Priority]->Priority != 0)
 		{
-			for (int i = CurrentWeapon->Priority - 1; i >= 0; --i)
+			if (Inventory[CurrentWeapon->Priority - 1] == NULL)
 			{
-				if (Inventory[i] && Inventory[i]->IsA(AWeapon::StaticClass()))
+				for (int i = CurrentWeapon->Priority - 1; i >= 0; --i)
 				{
-					EquipWeapon(Inventory[i]);
+					if (Inventory[i] && Inventory[i]->IsA(AWeapon::StaticClass()))
+					{
+						EquipWeapon(Inventory[i]);
+					}
 				}
+			}
+			else
+			{
+				EquipWeapon(Inventory[CurrentWeapon->Priority - 1]);
 			}
 		}
 		else
 		{
-			EquipWeapon(Inventory[CurrentWeapon->Priority - 1]);
+			EquipWeapon(Inventory[CurrentWeapon->Priority]);
 		}
-	}
-	else
-	{
-		EquipWeapon(Inventory[CurrentWeapon->Priority]);
 	}
 }
 
@@ -337,7 +344,7 @@ void ABOOMCharacter::DoubleJump() {
 	if (JumpCounter < MaxJump && !inputDisabled) {
 		JumpCounter++;
 		LaunchVec = GetLastMovementInputVector();
-		LaunchCharacter(FVector(LaunchVec.X*ForwardJumpForce, LaunchVec.Y*ForwardJumpForce, JumpForce), true, true);
+		LaunchCharacter(FVector(LaunchVec.X*ForwardJumpForce, LaunchVec.Y*ForwardJumpForce, JumpForce), false, true);
 	}
 }
 
