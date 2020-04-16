@@ -114,8 +114,10 @@ public:
 
 
 	/** Double Jump Handling */
+	
 	void DoubleJump();
 	void Dash();
+	UFUNCTION()
 	virtual void Landed(const FHitResult& Hit) override;
 	virtual bool IsFalling();
 
@@ -126,6 +128,8 @@ public:
 	/** Forward Shake */
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<UCameraShake> forwardShake;
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UCameraShake> fallShake;
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
