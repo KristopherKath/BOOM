@@ -366,7 +366,6 @@ void ABOOMCharacter::SlowDownDash() {
 void ABOOMCharacter::Landed(const FHitResult& Hit) {
 	JumpCounter = 0;
 	DashCounter = 0;
-	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayCameraShake(fallShake);
 }
 
 bool ABOOMCharacter::IsFalling(){
@@ -386,7 +385,6 @@ void ABOOMCharacter::MoveForward(float Value)
 	{
 		// add movement in that direction
 		AddMovementInput(GetActorForwardVector(), Value);
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayCameraShake(forwardShake);
 	}
 }
 
@@ -396,7 +394,6 @@ void ABOOMCharacter::MoveRight(float Value)
 	{
 		// add movement in that direction
 		AddMovementInput(GetActorRightVector(), Value);
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayCameraShake(rightShake);
 	}
 }
 
